@@ -3,6 +3,12 @@ from pydrying.dry import thin_layer, material
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+
+# TODO, YOU NEED TO ADD THE REAL DATA TO THIS
+
+
+
 # Define thermophysical properties
 def Diff(T, X):
     return 1e-9 * ones(len(T))  # Diffusion coefficient
@@ -19,7 +25,7 @@ caracteristic_length = 1e-2  # 1 cm thickness
 drying_time = 7200*5  # 2 hours in seconds
 heat_transfer_coefficient = 25  # W/m^2/K
 
-# Create a function to handle the simulation and return results
+#Create a function to handle the simulation and return results
 def run_drying_simulation(label, air_conditions, material_params, Lambda_val=0.02):
     # Define the drying material
     drying_material = material(Diff=Diff, aw=aw,
@@ -54,7 +60,7 @@ def plot_drying_rate(problem, label):
     drying_rate = -np.gradient(problem.res.Xmoy, problem.res.t)  # Calculate drying rate
     plt.plot(problem.res.t[:len(drying_rate)], drying_rate, label=label)
 
-# Plot Heat Flux (heat transfer coefficient * temperature difference)
+#Plot Heat Flux (heat transfer coefficient * temperature difference)
 def plot_heat_flux(problem, air_conditions, material_params, label):
     heat_flux = material_params['heat_transfer'] * (air_conditions['T'] - problem.res.T[-1, :])  # Heat flux calculation
     plt.plot(problem.res.t, heat_flux, label=label)
@@ -65,7 +71,17 @@ material_params_base = {'shape': material_shape, 'length': caracteristic_length,
                         'heat_transfer': heat_transfer_coefficient,
                         'drying_time': drying_time, 'X0': 0.5}  # 50% initial moisture
 
-# Initialize figures for combined plots
+
+
+
+##
+## PLOTS
+##
+
+
+
+
+#Initialize figures for combined plots
 plt.figure(figsize=(10, 6))
 plt.title("Effect of Air Temperature on Moisture Content")
 plt.xlabel("Drying time in s")
@@ -74,7 +90,6 @@ plt.ylabel("Moisture content (dry basis)")
 for T_air in air_temperatures:
     air_conditions = {'T': T_air, 'RH': 0.2}  # Relative humidity of 20%
     problem = run_drying_simulation(f'Air Temp: {T_air} °C', air_conditions, material_params_base)
-
     plot_moisture_content(problem, f'Air Temp: {T_air} °C')
 
 plt.legend()
@@ -89,13 +104,12 @@ plt.ylabel("Surface temperature (°C)")
 for T_air in air_temperatures:
     air_conditions = {'T': T_air, 'RH': 0.2}
     problem = run_drying_simulation(f'Air Temp: {T_air} °C', air_conditions, material_params_base)
-
     plot_surface_temperature(problem, f'Air Temp: {T_air} °C')
 
 plt.legend()
 plt.show()
 
-# Drying Rate Plot
+#Drying Rate Plot
 plt.figure(figsize=(10, 6))
 plt.title("Effect of Air Temperature on Drying Rate")
 plt.xlabel("Drying time in s")
@@ -119,12 +133,12 @@ plt.ylabel("Heat Flux (W/m^2)")
 for T_air in air_temperatures:
     air_conditions = {'T': T_air, 'RH': 0.2}
     problem = run_drying_simulation(f'Air Temp: {T_air} °C', air_conditions, material_params_base)
-
     plot_heat_flux(problem, air_conditions, material_params_base, f'Air Temp: {T_air} °C')
 
 plt.legend()
 plt.show()
 
+######
 # Experiment 2: Varying Heat Transfer Coefficient
 heat_transfer_coeffs = [5, 50, 150]  # Heat transfer coefficients
 material_params_base['X0'] = 0.5  # Reset initial moisture if changed
@@ -207,8 +221,7 @@ plt.xlabel("Drying time in s")
 plt.ylabel("Moisture content (dry basis)")
 
 for Lambda_val in thermal_conductivities:
-    problem = run_drying_simulation(f'Thermal Conductivity: {Lambda_val} W/mK',
-                                    air_conditions, material_params_base, Lambda_val=Lambda_val)
+    problem = run_drying_simulation(f'Thermal Conductivity: {Lambda_val} W/mK', air_conditions, material_params_base, Lambda_val=Lambda_val)
 
     plot_moisture_content(problem, f'Lambda: {Lambda_val} W/mK')
 
@@ -222,8 +235,7 @@ plt.xlabel("Drying time in s")
 plt.ylabel("Surface temperature (°C)")
 
 for Lambda_val in thermal_conductivities:
-    problem = run_drying_simulation(f'Thermal Conductivity: {Lambda_val} W/mK',
-                                    air_conditions, material_params_base, Lambda_val=Lambda_val)
+    problem = run_drying_simulation(f'Thermal Conductivity: {Lambda_val} W/mK', air_conditions, material_params_base, Lambda_val=Lambda_val)
 
     plot_surface_temperature(problem, f'Lambda: {Lambda_val} W/mK')
 
@@ -237,9 +249,7 @@ plt.xlabel("Drying time in s")
 plt.ylabel("Drying rate (1/s)")
 
 for Lambda_val in thermal_conductivities:
-    problem = run_drying_simulation(f'Thermal Conductivity: {Lambda_val} W/mK',
-                                    air_conditions, material_params_base, Lambda_val=Lambda_val)
-
+    problem = run_drying_simulation(f'Thermal Conductivity: {Lambda_val} W/mK', air_conditions, material_params_base, Lambda_val=Lambda_val)
     plot_drying_rate(problem, f'Lambda: {Lambda_val} W/mK')
 
 plt.legend()
@@ -252,9 +262,7 @@ plt.xlabel("Drying time in s")
 plt.ylabel("Heat Flux (W/m²)")
 
 for Lambda_val in thermal_conductivities:
-    problem = run_drying_simulation(f'Thermal Conductivity: {Lambda_val} W/mK',
-                                    air_conditions, material_params_base, Lambda_val=Lambda_val)
-
+    problem = run_drying_simulation(f'Thermal Conductivity: {Lambda_val} W/mK', air_conditions, material_params_base, Lambda_val=Lambda_val)
     plot_heat_flux(problem, air_conditions, material_params_base, f'Lambda: {Lambda_val} W/mK')
 
 plt.legend()
